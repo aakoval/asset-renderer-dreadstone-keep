@@ -1,9 +1,10 @@
 'use strict'
-const Web3 = require('web3');
+
 const path = require('path');
 const fs = require('fs')
 const { readdir } = require('fs/promises');
 const sharp = require('sharp')
+const nftHelper = require('../../helpers/nft')
 
 class NFTController {
   async get (req, res, next) {
@@ -25,6 +26,9 @@ class NFTController {
 
     const filePath = path.resolve(`resources/${type}/${filename}`)
     
+    const nft = await nftHelper.get(type, id)
+    console.log(nft)
+
     if (fs.existsSync(filePath)) {
       res.sendFile(filePath)
     } else {
