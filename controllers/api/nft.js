@@ -11,9 +11,6 @@ class NFTController {
     const { type, id } = req.params
     const { width, height } = req.query
 
-    // if (width || height) {
-    //   sharp().resize()
-    // }
     if (!type || !id) {
       res.status(404).json({ error: 'Wrong format' })
     }
@@ -23,13 +20,22 @@ class NFTController {
     const files = await readdir(folderPath)
 
     const filename = files.find((f) => f.startsWith(`${id}.`))
-
     const filePath = path.resolve(`resources/${type}/${filename}`)
-    
-    const nft = await nftHelper.get(type, id)
-    console.log(nft)
-
-    if (fs.existsSync(filePath)) {
+    let nft;
+    if (type === 'item') {
+      nft = await nftHelper.get(type, id)
+    }
+    if (nft?.color && nft?.type) {
+      res.setHeader('Content-Type', 'image/svg+xml')
+      res.render("animated", {
+        color: nft?.color || '#FFD011',
+        type: nft?.type?.name || 'Earth',
+        width: width,
+        height: height,
+        deltaX: width / 100 * 50,
+        deltaY: height / 100 * 50
+    })
+    } else if (fs.existsSync(filePath)) {
       res.sendFile(filePath)
     } else {
       res.status(404).json({ error: 'File not found' })
