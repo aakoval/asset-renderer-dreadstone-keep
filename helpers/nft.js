@@ -135,7 +135,7 @@ class NFT {
         if (Object.hasOwnProperty.call(obj, key)) {
           if (key === 'name' && obj[key] === 'Shaft Color') {
             const partBin = binary.slice(obj.start, obj.start + obj.length);
-            color = `rgba(${sep(partBin, 8).map(bin => parseInt(bin, 2)).join(',')})`;
+            color = partBin.inludes('undefined') ? '#FFD011' : `rgba(${sep(partBin, 8).map(bin => parseInt(bin, 2)).join(',')})`;
           }
           if (key === 'name' && obj[key] === 'Element') {
             const idx = parseInt(binary.slice(obj.start, obj.start + obj.length), 2);

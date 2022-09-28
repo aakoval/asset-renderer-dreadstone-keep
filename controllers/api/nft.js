@@ -9,7 +9,7 @@ const nftHelper = require('../../helpers/nft')
 class NFTController {
   async get (req, res, next) {
     const { type, id } = req.params
-    const { width, height } = req.query
+    const { width = 200, height = 200 } = req.query
 
     if (!type || !id) {
       res.status(404).json({ error: 'Wrong format' })
@@ -23,9 +23,7 @@ class NFTController {
     const filePath = path.resolve(`resources/${type}/${filename}`)
     let nft;
     if (type === 'item') {
-      nft = await nftHelper.get(type, id)
-    }
-    if (nft?.color && nft?.type) {
+      nft = await nftHelper.get(type, id);
       res.setHeader('Content-Type', 'image/svg+xml')
       res.render("animated", {
         color: nft?.color || '#FFD011',
