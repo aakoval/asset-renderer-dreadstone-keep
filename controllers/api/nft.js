@@ -25,7 +25,6 @@ class NFTController {
     if (type === 'item' || type === 'avatar') {
       nft = await nftHelper.get(type, id);
       res.setHeader('Content-Type', 'image/svg+xml');
-      console.log('typetype', type);
       if (type === 'item') {
         res.render("animated", {
           color: nft?.color || '#FFD011',

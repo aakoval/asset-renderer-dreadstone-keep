@@ -132,7 +132,7 @@ class NFT {
   }
 
   _binItemToJson(binary) {
-    const rulesJsonArr = require('./totem-default-filter.json');
+    const rulesJsonArr = require('./totem-filter.json');
     const sep = (xs, s) => xs.length ? [xs.slice(0, s), ...sep(xs.slice(s), s)] : []
     let color;
     let type;
@@ -140,19 +140,19 @@ class NFT {
     for (const obj of rulesJsonArr) {
       for (const key in obj) {
         if (Object.hasOwnProperty.call(obj, key)) {
-          if (key === 'name' && obj[key] === 'Shaft Color') {
-            const partBin = binary.slice(obj.start, obj.start + obj.length);
-            color = partBin?.includes('undefined') ? '#FFD011' : `rgba(${sep(partBin, 8).map(bin => parseInt(bin, 2)).join(',')})`;
+          if (key === 'id' && obj[key] === 'primary_color') {
+            const partBin = binary.slice(obj.gene * 32 + obj.start, obj.gene * 32 + obj.start + obj.length);
+            color = partBin.includes('undefined') ? '#FFD011' : `rgb(${sep(partBin, 8).map(bin => parseInt(bin, 2)).join(',')})`;
           }
-          if (key === 'name' && obj[key] === 'Element') {
-            const idx = parseInt(binary.slice(obj.start, obj.start + obj.length), 2);
-            type = obj['values'][idx - 1];
+          if (key === 'id' && obj[key] === 'classical_element') {
+            const idx = parseInt(binary.slice(obj.gene * 32 + obj.start, obj.gene * 32 + obj.start + obj.length), 2);
+            type = obj.values[idx]?.key;
           }
         }
       }
     }
 
-    switch (type.name) {
+    switch (type) {
       case 'Air':
         typeColors = ['#84DFF3', '#B5F9E8', '#51A490'];
         break;
@@ -195,7 +195,7 @@ class NFT {
           }
           if (key === 'id' && obj.type === 'map') {
             const idx = parseInt(binary.slice(obj.gene * 32 + obj.start, obj.gene * 32 + obj.start + obj.length), 2);
-            avatarSetting[obj.id] = obj.values[idx - 1].key;
+            avatarSetting[obj.id] = obj.values[idx].key;
           }
         }
       }
