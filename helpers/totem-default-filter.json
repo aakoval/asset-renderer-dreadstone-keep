@@ -1,0 +1,7 @@
+[
+  {"name": "Shaft Color", "type": "Color", "start": 0, "length": 32},
+  {"name": "Tip Material", "type": "enum", "start": 33, "length": 2, "values": [{"name": "Wood", "value": 0}, {"name": "Bone", "value": 1}, {"name": "Flint", "value": 2}, {"name": "Obsidian", "value": 3}]},
+  {"name": "Element", "type": "enum", "start": 35, "length": 2, "values": [{"name": "Air", "value": 0}, {"name": "Earth", "value": 1}, {"name": "Water", "value": 2}, {"name": "Fire", "value": 3}]},
+  {"name": "Range", "type": "Float", "start": 37, "length": 32},
+  {"name": "Damage", "type": "Float", "start": 69, "length": 32}
+]
