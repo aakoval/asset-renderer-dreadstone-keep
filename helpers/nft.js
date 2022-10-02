@@ -1,8 +1,5 @@
 'use strict'
-
-const ethers = require("ethers");
 const Web3 = require('web3');
-const fs = require('fs');
 
 class NFT {
   constructor() {
@@ -71,8 +68,6 @@ class NFT {
       
 
       const result = this._parseHexString(tokenURI)
-
-      // const result = hexToBinary(tokenURI)
       let rJson = {};
       if (type === 'item') {
         rJson = this._binItemToJson(result);
@@ -125,7 +120,9 @@ class NFT {
     };
     let ret = '';
     for (let i = 0, len = str.length; i < len; i++) {
-        ret += lookup[str[i]];
+      if (lookup[str[i]]) {
+        ret += ((ret.length === 0 && lookup[str[i]] === '0000') ? '' : lookup[str[i]]);
+      }
     }
     return ret;
 
@@ -179,8 +176,11 @@ class NFT {
     const rulesJsonArr = require('./avatar-filter.json');
     const sep = (xs, s) => xs.length ? [xs.slice(0, s), ...sep(xs.slice(s), s)] : []
     let avatarSetting = {
-      sex_bio: '1',
+      sex_bio: 1,
+      body_strength: 1,
+      body_type: 1,
       human_skin_color: '#f9d4ab',
+      human_skin_color_darken: '#f9d4ab',
       human_hair_color: '#b1b1b1',
       human_eye_color: '#b5d6e0',
       hair_styles: 'afro',
@@ -193,14 +193,24 @@ class NFT {
             const partBin = binary.slice(obj.gene * 32 + obj.start, obj.gene * 32 + obj.start + obj.length);
             avatarSetting.primary_color = partBin.includes('undefined') ? '#FFD011' : `rgb(${sep(partBin, 8).map(bin => parseInt(bin, 2)).join(',')})`;
           }
+          if (key === 'id' && obj.type === 'bool') {
+            const partBin = binary.slice(obj.gene * 32 + obj.start, obj.gene * 32 + obj.start + obj.length);
+            avatarSetting[obj.id] = parseInt(partBin, 2);
+          }
           if (key === 'id' && obj.type === 'map') {
             const idx = parseInt(binary.slice(obj.gene * 32 + obj.start, obj.gene * 32 + obj.start + obj.length), 2);
-            avatarSetting[obj.id] = obj.values[idx].key;
+            avatarSetting[obj.id] = obj.values[idx]?.key || avatarSetting[obj.id];
           }
         }
       }
     }
+    
+    avatarSetting.human_skin_color_darken = this.adjust(avatarSetting.human_skin_color, -20);
     return avatarSetting;
+  }
+
+  adjust(color, amount) {
+    return '#' + color.replace(/^#/, '').replace(/../g, color => ('0'+Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
   }
 }
 
