@@ -15,6 +15,7 @@ class NFTController {
 
     if (type === 'item' || type === 'avatar') {
       const nft = await nftHelper.get(type, id);
+      console.log('nfft', nft);
       res.setHeader('Content-Type', 'image/svg+xml');
       if (type === 'item') {
         res.render('layouts/item', {

@@ -204,7 +204,6 @@ class NFT {
         }
       }
     }
-    
     avatarSetting.human_skin_color_darken = this.adjust(avatarSetting.human_skin_color, -20);
     return avatarSetting;
   }
