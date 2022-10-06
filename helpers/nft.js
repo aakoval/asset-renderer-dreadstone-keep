@@ -182,6 +182,7 @@ class NFT {
       human_skin_color: '#f9d4ab',
       human_skin_color_darken: '#f9d4ab',
       human_hair_color: '#b1b1b1',
+      human_hair_color_lighten: '#b1b1b1',
       human_eye_color: '#b5d6e0',
       hair_styles: 'afro',
       primary_color: 'rgba(65,184,206,128)'
@@ -205,6 +206,8 @@ class NFT {
       }
     }
     avatarSetting.human_skin_color_darken = this.adjust(avatarSetting.human_skin_color, -20);
+    avatarSetting.human_hair_color_lighten = this.adjust(avatarSetting.human_hair_color, 150);
+    
     return avatarSetting;
   }
 
