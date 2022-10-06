@@ -66,13 +66,10 @@ class NFT {
 
       const tokenURI = await contract.methods.tokenURI(id).call()
       
-
-      const result = this._parseHexString(tokenURI)
+      console.log('tokenURI', tokenURI);
+      const result = this._parseHexString(tokenURI);
+      console.log('result', result);
       let rJson = {};
-      if (type === 'item') {
-        rJson = this._binItemToJson(result);
-      }
-
       if (type === 'avatar') {
         rJson = this._binAvatarToJson(result);
       }
@@ -128,50 +125,6 @@ class NFT {
 
   }
 
-  _binItemToJson(binary) {
-    const rulesJsonArr = require('./totem-filter.json');
-    const sep = (xs, s) => xs.length ? [xs.slice(0, s), ...sep(xs.slice(s), s)] : []
-    let color;
-    let type;
-    let typeColors;
-    for (const obj of rulesJsonArr) {
-      for (const key in obj) {
-        if (Object.hasOwnProperty.call(obj, key)) {
-          if (key === 'id' && obj[key] === 'primary_color') {
-            const partBin = binary.slice(obj.gene * 32 + obj.start, obj.gene * 32 + obj.start + obj.length);
-            color = partBin.includes('undefined') ? '#FFD011' : `rgb(${sep(partBin, 8).map(bin => parseInt(bin, 2)).join(',')})`;
-          }
-          if (key === 'id' && obj[key] === 'classical_element') {
-            const idx = parseInt(binary.slice(obj.gene * 32 + obj.start, obj.gene * 32 + obj.start + obj.length), 2);
-            type = obj.values[idx]?.key;
-          }
-        }
-      }
-    }
-
-    switch (type) {
-      case 'Air':
-        typeColors = ['#84DFF3', '#B5F9E8', '#51A490'];
-        break;
-      case 'Earth':
-        typeColors = ['#9FFC2A', '#36ED7F', '#418E1D'];
-        break;
-      case 'Fire':
-        typeColors = ['#FC2A50', '#ED3636', '#9C1818'];
-        break;
-      case 'Water':
-        typeColors = ['#2A97FC', '#73A3D0', '#184D9C'];
-        break;
-      default:
-        typeColors = ['#9FFC2A', '#36ED7F', '#418E1D'];
-        break;
-    }
-    return {
-      color,
-      typeColors
-    };
-  }
-
   _binAvatarToJson(binary) {
     const rulesJsonArr = require('./avatar-filter.json');
     const sep = (xs, s) => xs.length ? [xs.slice(0, s), ...sep(xs.slice(s), s)] : []
@@ -182,9 +135,12 @@ class NFT {
       human_skin_color: '#f9d4ab',
       human_skin_color_darken: '#f9d4ab',
       human_hair_color: '#b1b1b1',
+      human_hair_color_darken: '#b1b1b1',
       human_eye_color: '#b5d6e0',
       hair_styles: 'afro',
-      primary_color: 'rgba(65,184,206,128)'
+      primary_color: 'rgba(65,184,206,128)',
+      weapon_type: 'Axe',
+      weapon_material: 'Obsidian'
     }
     for (const obj of rulesJsonArr) {
       for (const key in obj) {
@@ -205,6 +161,9 @@ class NFT {
       }
     }
     avatarSetting.human_skin_color_darken = this.adjust(avatarSetting.human_skin_color, -20);
+    avatarSetting.human_hair_color_darken = this.adjust(avatarSetting.human_hair_color_darken, -20);
+    // avatarSetting.weapon_material = 'Wood';
+    // avatarSetting.weapon_type = 'Axe';
     return avatarSetting;
   }
 
